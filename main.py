@@ -107,12 +107,59 @@ def prince():
                     print(f'COOKIE NUMBER: {cookie_index + 1}')
                     print(f'Link: https://m.basic.facebook.com/{id_post}')
                     print(f'Comments: {commenter_name}: {comment}\n')
-                    x = (x + 1) % len(comments)
+
+                    # Immediately try the next cookie
                     cookie_index = (cookie_index + 1) % len(valid_cookies)
+                    current_cookie, token_eaag = valid_cookies[cookie_index]
+                    response = post_comment(id_post, commenter_name, comment, current_cookie, token_eaag)
+                    if response:
+                        if response.status_code == 200:
+                            current_time = time.strftime('%Y-%m-%d %I:%M:%S %p')
+                            print(f'Post id: {id_post}')
+                            print(f'  - Time: {current_time}')
+                            print(f'COOKIE NUMBER: {cookie_index + 1}')
+                            print(f'Comment sent: {commenter_name}: {comment}')
+                            x = (x + 1) % len(comments)
+                            cookie_index = (cookie_index + 1) % len(valid_cookies)
+                        else:
+                            print(f'[!] Status: Failure - {response.status_code}')
+                            print(f'COOKIE NUMBER: {cookie_index + 1}')
+                            print(f'Link: https://m.basic.facebook.com/{id_post}')
+                            print(f'Comments: {commenter_name}: {comment}\n')
+                            x = (x + 1) % len(comments)
+                            cookie_index = (cookie_index + 1) % len(valid_cookies)
+                    else:
+                        print(f'[!] Error posting comment.')
+                        x = (x + 1) % len(comments)
+                        cookie_index = (cookie_index + 1) % len(valid_cookies)
+
             else:
                 print(f'[!] Error posting comment.')
-                x = (x + 1) % len(comments)
+
+                # Immediately try the next cookie
                 cookie_index = (cookie_index + 1) % len(valid_cookies)
+                current_cookie, token_eaag = valid_cookies[cookie_index]
+                response = post_comment(id_post, commenter_name, comment, current_cookie, token_eaag)
+                if response:
+                    if response.status_code == 200:
+                        current_time = time.strftime('%Y-%m-%d %I:%M:%S %p')
+                        print(f'Post id: {id_post}')
+                        print(f'  - Time: {current_time}')
+                        print(f'COOKIE NUMBER: {cookie_index + 1}')
+                        print(f'Comment sent: {commenter_name}: {comment}')
+                        x = (x + 1) % len(comments)
+                        cookie_index = (cookie_index + 1) % len(valid_cookies)
+                    else:
+                        print(f'[!] Status: Failure - {response.status_code}')
+                        print(f'COOKIE NUMBER: {cookie_index + 1}')
+                        print(f'Link: https://m.basic.facebook.com/{id_post}')
+                        print(f'Comments: {commenter_name}: {comment}\n')
+                        x = (x + 1) % len(comments)
+                        cookie_index = (cookie_index + 1) % len(valid_cookies)
+                else:
+                    print(f'[!] Error posting comment.')
+                    x = (x + 1) % len(comments)
+                    cookie_index = (cookie_index + 1) % len(valid_cookies)
 
         except RequestException as e:
             print(f'[!] Error making request: {e}')
